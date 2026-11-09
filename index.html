@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusAI Enterprise Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0f4ff',
+                            100: '#e0e9fe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            800: '#1e1b4b',
+                            900: '#0f172a',
+                            950: '#020617',
+                            accent: '#8b5cf6',
+                            neon: '#06b6d4',
+                            pink: '#ec4899',
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Glassmorphism effects */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+        }
+
+        /* Pulsing Glow Animation */
+        @keyframes neon-glow {
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.8)); }
+        }
+        .neon-glow {
+            animation: neon-glow 3s infinite ease-in-out;
+        }
+        
+        /* Message Markdown Styles */
+        .prose pre {
+            background-color: #0d1117 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .prose code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #38bdf8;
+        }
+        .prose p {
+            margin-bottom: 0.75rem;
+            line-height: 1.625;
+        }
+        .prose ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 0.75rem; }
+        .prose ol { list-style-type: decimal; margin-left: 1.25rem; margin-bottom: 0.75rem; }
+        .prose blockquote {
+            border-left: 3px solid #8b5cf6;
+            padding-left: 1rem;
+            color: #94a3b8;
+            font-style: italic;
+            margin: 0.75rem 0;
+        }
+        .prose h1, .prose h2, .prose h3 {
+            color: #f8fafc;
+            font-weight: 600;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-cyber-950 text-slate-100 font-sans h-screen flex overflow-hidden antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- APP WRAPPER -->
+    <div class="flex w-full h-full relative">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="w-80 bg-slate-900/90 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 z-30 fixed inset-y-0 left-0 md:relative md:translate-x-0 -translate-x-full glass-panel">
+            <!-- Sidebar Header -->
+            <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 fa-brain"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base tracking-wide text-white flex items-center gap-2">
+                            NexusAI <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono">PRO</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">Enterprise AI Hub</p>
+                    </div>
+                </div>
+                <button id="close-sidebar-btn" class="md:hidden text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- New Session & Quick Navigation -->
+            <div class="p-3 space-y-2">
+                <button id="new-chat-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/25 active:scale-[0.98]">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                    <span>New Workspace Chat</span>
+                </button>
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
+                    <input type="text" id="search-chat-input" placeholder="Search conversations..." class="w-full bg-slate-950/70 text-xs text-slate-200 placeholder-slate-500 pl-8 pr-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500 transition">
+                </div>
+            </div>
+
+            <!-- Workspace Tabs / Navigation -->
+            <div class="px-3 py-1 border-b border-slate-800/60">
+                <div class="flex bg-slate-950/60 p-1 rounded-lg text-xs font-medium">
+                    <button id="tab-chats" class="flex-1 py-1.5 text-center rounded-md bg-indigo-600/90 text-white shadow-sm transition">Chats</button>
+                    <button id="tab-agents" class="flex-1 py-1.5 text-center rounded-md text-slate-400 hover:text-white transition">Agents</button>
+                    <button id="tab-studio" class="flex-1 py-1.5 text-center rounded-md text-slate-400 hover:text-white transition">Image Studio</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Workspace Content List -->
+            <div class="flex-1 overflow-y-auto px-3 py-2 space-y-4">
+                <!-- Chat History Section -->
+                <div id="section-chats-list">
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Recent Chats</span>
+                        <button id="clear-all-chats" class="text-[11px] text-slate-500 hover:text-rose-400 transition" title="Clear all history">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div id="chats-history-container" class="space-y-1">
+                        <!-- Dynamic chat items populated here -->
+                    </div>
+                </div>
+
+                <!-- Agents & System Prompts Section (Hidden by default) -->
+                <div id="section-agents-list" class="hidden space-y-2">
+                    <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2 mb-2">Preset Agent Personas</div>
+                    <div id="agents-presets-container" class="space-y-1">
+                        <!-- Agent presets list -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Status & Config Footer -->
+            <div class="p-3 border-t border-slate-800/80 bg-slate-950/40">
+                <button id="open-settings-btn" class="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/60 transition group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-semibold text-xs">
+                            PRO
+                        </div>
+                        <div class="text-left">
+                            <p class="text-xs font-semibold text-slate-200 group-hover:text-indigo-400 transition">Workspace Settings</p>
+                            <p class="text-[10px] text-slate-400">API Keys & Custom Specs</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-sliders text-slate-400 group-hover:text-white transition text-xs"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE CONTAINER -->
+        <main class="flex-1 flex flex-col h-full bg-slate-950 relative overflow-hidden">
+            
+            <!-- Top App Navigation Bar -->
+            <header class="h-16 border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 md:px-6 flex items-center justify-between z-20">
+                <div class="flex items-center gap-3">
+                    <button id="toggle-sidebar-btn" class="text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-bars text-sm"></i>
+                    </button>
+
+                    <!-- Active View Info -->
+                    <div class="flex items-center gap-3">
+                        <div id="current-mode-icon" class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div>
+                            <h2 id="current-session-title" class="font-semibold text-sm text-slate-100 flex items-center gap-2">
+                                New Conversation
+                            </h2>
+                            <p id="current-agent-badge" class="text-[10px] text-slate-400 font-mono">
+                                System Persona: Standard Assistant
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <button id="prompt-library-btn" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-xs font-medium text-slate-300 hover:text-white border border-slate-700/60 transition">
+                        <i class="fa-solid fa-book-bookmark text-indigo-400"></i>
+                        <span>Prompt Library</span>
+                    </button>
+                    
+                    <button id="export-chat-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-xs font-medium text-slate-300 hover:text-white border border-slate-700/60 transition" title="Export Conversation">
+                        <i class="fa-solid fa-download text-cyan-400"></i>
+                        <span class="hidden md:inline">Export</span>
+                    </button>
+
+                    <button id="open-params-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-xs font-medium text-slate-300 hover:text-white border border-slate-700/60 transition">
+                        <i class="fa-solid fa-sliders text-purple-400"></i>
+                        <span class="hidden md:inline">Model Params</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW 1: CHAT WORKSPACE -->
+            <div id="view-chat" class="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden relative">
+                <!-- Messages Container -->
+                <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-4xl mx-auto w-full">
+                    <!-- Dynamic chat messages inserted here -->
+                </div>
+
+                <!-- Chat Input Dock -->
+                <div class="p-4 md:px-6 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
+                    <div class="max-w-4xl mx-auto relative glass-panel rounded-2xl border border-slate-800 shadow-2xl p-2 transition-all focus-within:border-indigo-500/60 focus-within:ring-1 focus-within:ring-indigo-500/40">
+                        
+                        <!-- System Instruction Indicator Pill -->
+                        <div id="active-system-prompt-indicator" class="px-3 py-1 mb-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[11px] text-indigo-300 flex items-center justify-between hidden">
+                            <span class="truncate"><i class="fa-solid fa-user-gear mr-1.5"></i> <span id="active-prompt-text">Custom System Persona Active</span></span>
+                            <button id="clear-system-prompt-btn" class="text-indigo-400 hover:text-white ml-2"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+
+                        <textarea 
+                            id="user-input" 
+                            rows="2" 
+                            placeholder="Ask NexusAI anything, paste code, or type system commands..." 
+                            class="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm md:text-base px-3 py-2 focus:outline-none resize-none max-h-48"
+                        ></textarea>
+                        
+                        <!-- Bottom Bar Tools Inside Input Box -->
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/60 px-2">
+                            <div class="flex items-center gap-1">
+                                <button id="input-attach-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition text-xs" title="Attach file or code context">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </button>
+                                <button id="input-persona-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition text-xs" title="Quick System Persona">
+                                    <i class="fa-solid fa-robot"></i>
+                                </button>
+                                <span class="text-[10px] text-slate-600 font-mono hidden sm:inline ml-2">Shift + Enter for new line</span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button id="send-msg-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-lg shadow-indigo-600/30 active:scale-95">
+                                    <span>Send</span>
+                                    <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: IMAGE GENERATION STUDIO (Hidden by default) -->
+            <div id="view-studio" class="flex-1 overflow-y-auto p-4 md:p-8 max-w-5xl mx-auto w-full hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> AI Image Generation Studio
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Create high-quality visual assets using Gemini 3.1 Flash Image capabilities.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Controls Column -->
+                    <div class="lg:col-span-1 space-y-4 glass-card p-5 rounded-2xl">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Prompt Description</label>
+                            <textarea id="image-prompt-input" rows="4" placeholder="A futuristic cyberpunk city with neon lights and flying vehicles at dusk, ultra detailed..." class="w-full glass-input rounded-xl p-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Art Style Preset</label>
+                            <select id="image-style-select" class="w-full glass-input rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none">
+                                <option value="photorealistic">Photorealistic 8K</option>
+                                <option value="cyberpunk">Cyberpunk Neon</option>
+                                <option value="anime">Anime / Manga Digital Art</option>
+                                <option value="3d-render">3D Pixar Style Render</option>
+                                <option value="fantasy">Dark Fantasy Oil Painting</option>
+                                <option value="minimalist">Minimalist Vector Art</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Aspect Ratio</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" data-ratio="1:1" class="ratio-btn bg-indigo-600 text-white p-2 rounded-lg text-xs font-medium border border-indigo-500 text-center">1:1 Square</button>
+                                <button type="button" data-ratio="16:9" class="ratio-btn bg-slate-800 text-slate-400 hover:text-white p-2 rounded-lg text-xs font-medium border border-slate-700 text-center">16:9 Landscape</button>
+                                <button type="button" data-ratio="9:16" class="ratio-btn bg-slate-800 text-slate-400 hover:text-white p-2 rounded-lg text-xs font-medium border border-slate-700 text-center">9:16 Portrait</button>
+                            </div>
+                        </div>
+
+                        <button id="generate-image-btn" class="w-full bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-pink-600/20 transition active:scale-95">
+                            <i class="fa-solid fa-paintbrush"></i>
+                            <span>Generate Image</span>
+                        </button>
+                    </div>
+
+                    <!-- Display Preview Column -->
+                    <div class="lg:col-span-2 glass-panel rounded-2xl p-6 flex flex-col items-center justify-center min-h-[400px] border border-slate-800">
+                        <div id="image-placeholder" class="text-center space-y-3">
+                            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 mx-auto text-2xl">
+                                <i class="fa-regular fa-image"></i>
+                            </div>
+                            <p class="text-xs text-slate-500">Generated images will appear here in high definition.</p>
+                        </div>
+
+                        <div id="image-loading" class="hidden text-center space-y-4">
+                            <div class="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <p class="text-xs text-slate-400 font-mono animate-pulse">Rendering AI Canvas with Gemini 3.1 Flash Image...</p>
+                        </div>
+
+                        <div id="image-result-container" class="hidden w-full flex flex-col items-center">
+                            <img id="generated-image-output" src="" alt="Generated Artwork" class="max-h-[450px] w-auto rounded-xl shadow-2xl border border-slate-700 object-contain">
+                            <div class="mt-4 flex gap-3">
+                                <a id="download-image-link" download="nexus_ai_artwork.png" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition">
+                                    <i class="fa-solid fa-download"></i> Download High-Res
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: SETTINGS & API KEYS -->
+    <div id="modal-settings" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border border-slate-800 p-6 space-y-5 relative shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-indigo-400"></i> Enterprise Settings
+                </h3>
+                <button class="close-modal-btn text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Custom Gemini API Key (Optional)</label>
+                    <p class="text-[11px] text-slate-500 mb-2">Leave blank to use default workspace environment keys.</p>
+                    <input type="password" id="custom-api-key" placeholder="AIzaSy..." class="w-full glass-input rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">UI Accent Color</label>
+                    <div class="flex gap-3 mt-2">
+                        <button class="theme-color-btn w-7 h-7 rounded-full bg-indigo-600 ring-2 ring-white/20" data-theme="indigo"></button>
+                        <button class="theme-color-btn w-7 h-7 rounded-full bg-cyan-500 ring-2 ring-transparent" data-theme="cyan"></button>
+                        <button class="theme-color-btn w-7 h-7 rounded-full bg-purple-600 ring-2 ring-transparent" data-theme="purple"></button>
+                        <button class="theme-color-btn w-7 h-7 rounded-full bg-emerald-500 ring-2 ring-transparent" data-theme="emerald"></button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Default Speech Rate</label>
+                    <input type="range" id="speech-rate-slider" min="0.5" max="1.5" step="0.1" value="1" class="w-full accent-indigo-500">
+                    <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                        <span>0.5x Slow</span>
+                        <span>1.0x Normal</span>
+                        <span>1.5x Fast</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
+                <button class="close-modal-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-medium transition">Cancel</button>
+                <button id="save-settings-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition">Save Configurations</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: MODEL PARAMETERS -->
+    <div id="modal-params" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-panel w-full max-w-md rounded-2xl border border-slate-800 p-6 space-y-5 relative shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-purple-400"></i> Model Parameters
+                </h3>
+                <button class="close-modal-btn text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span class="text-slate-300">Temperature</span>
+                        <span id="param-temp-val" class="text-indigo-400 font-mono">0.7</span>
+                    </div>
+                    <input type="range" id="param-temp" min="0" max="2" step="0.1" value="0.7" class="w-full accent-indigo-500">
+                    <p class="text-[10px] text-slate-500 mt-1">Controls creativity. Lower values are more deterministic.</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span class="text-slate-300">Top-P</span>
+                        <span id="param-topp-val" class="text-indigo-400 font-mono">0.95</span>
+                    </div>
+                    <input type="range" id="param-topp" min="0" max="1" step="0.05" value="0.95" class="w-full accent-indigo-500">
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span class="text-slate-300">Max Tokens</span>
+                        <span id="param-max-val" class="text-indigo-400 font-mono">2048</span>
+                    </div>
+                    <input type="range" id="param-max" min="256" max="8192" step="256" value="2048" class="w-full accent-indigo-500">
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 flex justify-end">
+                <button class="close-modal-btn bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition">Apply Parameters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PROMPT LIBRARY -->
+    <div id="modal-prompts" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl border border-slate-800 p-6 space-y-4 relative shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Enterprise Prompt Library
+                </h3>
+                <button class="close-modal-btn text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="prompt-templates-list" class="flex-1 overflow-y-auto space-y-3 pr-1">
+                <!-- Prompt cards injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT ENGINE -->
+    <script>
+        /**
+         * NEXUS AI ENTERPRISE ENGINE
+         * Single-file modular JavaScript architecture
+         */
+        const AppState = {
+            activeView: 'chat', // 'chat' or 'studio'
+            chats: [],
+            currentChatId: null,
+            systemPersona: '',
+            params: {
+                temperature: 0.7,
+                topP: 0.95,
+                maxTokens: 2048
+            },
+            settings: {
+                customApiKey: '',
+                theme: 'indigo',
+                speechRate: 1.0
+            },
+            agentPresets: [
+                { id: 'standard', name: 'General Assistant', icon: 'fa-robot', color: 'text-indigo-400', prompt: 'You are NexusAI, a helpful, precise enterprise AI assistant.' },
+                { id: 'coder', name: 'Code Architect', icon: 'fa-code', color: 'text-cyan-400', prompt: 'You are an elite Senior Software Architect. Provide clean, efficient code with clear explanations and inline comments.' },
+                { id: 'writer', name: 'Content Strategist', icon: 'fa-pen-nib', color: 'text-pink-400', prompt: 'You are a professional editor and copywriter. Refine tone, clarity, and persuasive structure.' },
+                { id: 'analyst', name: 'Data Analyst', icon: 'fa-chart-pie', color: 'text-emerald-400', prompt: 'You are a data science expert. Analyze complex patterns and formulate structured data summaries.' }
+            ],
+            promptLibrary: [
+                { title: 'Code Refactoring & Optimization', category: 'Engineering', text: 'Please review the following code snippet for performance bottlenecks, security vulnerabilities, and readability. Provide an optimized version:\n\n```javascript\n// Paste code here\n```' },
+                { title: 'Executive Summary Generator', category: 'Business', text: 'Summarize the following report into key executive bullet points, main risks, and immediate actionable next steps:\n\n' },
+                { title: 'System Architecture Outline', category: 'Tech Lead', text: 'Design a scalable, microservices-based cloud system architecture for an application with the following requirements:\n' },
+                { title: 'SEO Blog Post Outline', category: 'Marketing', text: 'Create a comprehensive SEO blog post outline with H2 and H3 headings for the target keyword: ' }
+            ]
+        };
+
+        // DOM Elements
+        const DOM = {
+            sidebar: document.getElementById('sidebar'),
+            toggleSidebarBtn: document.getElementById('toggle-sidebar-btn'),
+            closeSidebarBtn: document.getElementById('close-sidebar-btn'),
+            newChatBtn: document.getElementById('new-chat-btn'),
+            chatsContainer: document.getElementById('chats-history-container'),
+            agentsPresetsContainer: document.getElementById('agents-presets-container'),
+            searchChatInput: document.getElementById('search-chat-input'),
+            tabChats: document.getElementById('tab-chats'),
+            tabAgents: document.getElementById('tab-agents'),
+            tabStudio: document.getElementById('tab-studio'),
+            sectionChatsList: document.getElementById('section-chats-list'),
+            sectionAgentsList: document.getElementById('section-agents-list'),
+            clearAllChatsBtn: document.getElementById('clear-all-chats'),
+            
+            // Views
+            viewChat: document.getElementById('view-chat'),
+            viewStudio: document.getElementById('view-studio'),
+            messagesContainer: document.getElementById('messages-container'),
+            userInput: document.getElementById('user-input'),
+            sendMsgBtn: document.getElementById('send-msg-btn'),
+            currentSessionTitle: document.getElementById('current-session-title'),
+            currentAgentBadge: document.getElementById('current-agent-badge'),
+            activeSystemPromptIndicator: document.getElementById('active-system-prompt-indicator'),
+            activePromptText: document.getElementById('active-prompt-text'),
+            clearSystemPromptBtn: document.getElementById('clear-system-prompt-btn'),
+            
+            // Modals & Action Btns
+            openSettingsBtn: document.getElementById('open-settings-btn'),
+            modalSettings: document.getElementById('modal-settings'),
+            openParamsBtn: document.getElementById('open-params-btn'),
+            modalParams: document.getElementById('modal-params'),
+            promptLibraryBtn: document.getElementById('prompt-library-btn'),
+            modalPrompts: document.getElementById('modal-prompts'),
+            exportChatBtn: document.getElementById('export-chat-btn'),
+            saveSettingsBtn: document.getElementById('save-settings-btn'),
+            customApiKeyInput: document.getElementById('custom-api-key'),
+            
+            // Image Studio Elements
+            imagePromptInput: document.getElementById('image-prompt-input'),
+            imageStyleSelect: document.getElementById('image-style-select'),
+            generateImageBtn: document.getElementById('generate-image-btn'),
+            imagePlaceholder: document.getElementById('image-placeholder'),
+            imageLoading: document.getElementById('image-loading'),
+            imageResultContainer: document.getElementById('image-result-container'),
+            generatedImageOutput: document.getElementById('generated-image-output'),
+            downloadImageLink: document.getElementById('download-image-link')
+        };
+
+        // Initialize App
+        function initApp() {
+            loadLocalStorage();
+            setupEventListeners();
+            renderAgentsPresets();
+            renderPromptLibrary();
+            
+            if (AppState.chats.length === 0) {
+                createNewChat();
+            } else {
+                switchChat(AppState.chats[0].id);
+            }
+
+            // Init Highlight.js
+            hljs.highlightAll();
+        }
+
+        // Local Storage State Loader
+        function loadLocalStorage() {
+            const savedChats = localStorage.getItem('nexus_chats');
+            if (savedChats) {
+                try { AppState.chats = JSON.parse(savedChats); } catch(e) { AppState.chats = []; }
+            }
+            const savedSettings = localStorage.getItem('nexus_settings');
+            if (savedSettings) {
+                try { AppState.settings = JSON.parse(savedSettings); } catch(e){}
+            }
+            if (AppState.settings.customApiKey) {
+                DOM.customApiKeyInput.value = AppState.settings.customApiKey;
+            }
+        }
+
+        function saveLocalStorage() {
+            localStorage.setItem('nexus_chats', JSON.stringify(AppState.chats));
+            localStorage.setItem('nexus_settings', JSON.stringify(AppState.settings));
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Sidebar Navigation
+            DOM.toggleSidebarBtn.addEventListener('click', () => {
+                DOM.sidebar.classList.toggle('-translate-x-full');
+            });
+            DOM.closeSidebarBtn.addEventListener('click', () => {
+                DOM.sidebar.classList.add('-translate-x-full');
+            });
+
+            // Tabs
+            DOM.tabChats.addEventListener('click', () => switchSidebarTab('chats'));
+            DOM.tabAgents.addEventListener('click', () => switchSidebarTab('agents'));
+            DOM.tabStudio.addEventListener('click', () => switchMainView('studio'));
+
+            // Chat Actions
+            DOM.newChatBtn.addEventListener('click', () => {
+                createNewChat();
+                if (window.innerWidth < 768) DOM.sidebar.classList.add('-translate-x-full');
+            });
+            DOM.sendMsgBtn.addEventListener('click', handleSendMessage);
+            DOM.userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+
+            DOM.clearAllChatsBtn.addEventListener('click', () => {
+                AppState.chats = [];
+                saveLocalStorage();
+                createNewChat();
+            });
+
+            DOM.clearSystemPromptBtn.addEventListener('click', () => {
+                AppState.systemPersona = '';
+                DOM.activeSystemPromptIndicator.classList.add('hidden');
+            });
+
+            // Search Filter
+            DOM.searchChatInput.addEventListener('input', (e) => {
+                renderChatsList(e.target.value.toLowerCase());
+            });
+
+            // Modals
+            DOM.openSettingsBtn.addEventListener('click', () => DOM.modalSettings.classList.remove('hidden'));
+            DOM.openParamsBtn.addEventListener('click', () => DOM.modalParams.classList.remove('hidden'));
+            DOM.promptLibraryBtn.addEventListener('click', () => DOM.modalPrompts.classList.remove('hidden'));
+            DOM.exportChatBtn.addEventListener('click', exportCurrentChat);
+
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    DOM.modalSettings.classList.add('hidden');
+                    DOM.modalParams.classList.add('hidden');
+                    DOM.modalPrompts.classList.add('hidden');
+                });
+            });
+
+            // Settings Save
+            DOM.saveSettingsBtn.addEventListener('click', () => {
+                AppState.settings.customApiKey = DOM.customApiKeyInput.value.trim();
+                saveLocalStorage();
+                DOM.modalSettings.classList.add('hidden');
+            });
+
+            // Model Parameters Sliders
+            document.getElementById('param-temp').addEventListener('input', (e) => {
+                AppState.params.temperature = parseFloat(e.target.value);
+                document.getElementById('param-temp-val').textContent = e.target.value;
+            });
+
+            // Image Generation Aspect Ratio Buttons
+            document.querySelectorAll('.ratio-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.ratio-btn').forEach(b => {
+                        b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
+                        b.classList.add('bg-slate-800', 'text-slate-400', 'border-slate-700');
+                    });
+                    const target = e.currentTarget;
+                    target.classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
+                    target.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
+                });
+            });
+
+            DOM.generateImageBtn.addEventListener('click', handleGenerateImage);
+        }
+
+        // View Controllers
+        function switchMainView(view) {
+            AppState.activeView = view;
+            if (view === 'chat') {
+                DOM.viewChat.classList.remove('hidden');
+                DOM.viewStudio.classList.add('hidden');
+                DOM.tabStudio.classList.remove('bg-indigo-600', 'text-white');
+                DOM.tabStudio.classList.add('text-slate-400');
+                DOM.tabChats.classList.add('bg-indigo-600', 'text-white');
+            } else if (view === 'studio') {
+                DOM.viewChat.classList.add('hidden');
+                DOM.viewStudio.classList.remove('hidden');
+                DOM.tabChats.classList.remove('bg-indigo-600', 'text-white');
+                DOM.tabChats.classList.add('text-slate-400');
+                DOM.tabStudio.classList.add('bg-indigo-600', 'text-white');
+                if (window.innerWidth < 768) DOM.sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        function switchSidebarTab(tab) {
+            if (tab === 'chats') {
+                DOM.sectionChatsList.classList.remove('hidden');
+                DOM.sectionAgentsList.classList.add('hidden');
+                DOM.tabChats.classList.add('bg-indigo-600', 'text-white');
+                DOM.tabAgents.classList.remove('bg-indigo-600', 'text-white');
+                DOM.tabAgents.classList.add('text-slate-400');
+            } else {
+                DOM.sectionChatsList.classList.add('hidden');
+                DOM.sectionAgentsList.classList.remove('hidden');
+                DOM.tabAgents.classList.add('bg-indigo-600', 'text-white');
+                DOM.tabChats.classList.remove('bg-indigo-600', 'text-white');
+                DOM.tabChats.classList.add('text-slate-400');
+            }
+        }
+
+        // Chat Data Management
+        function createNewChat() {
+            const newChat = {
+                id: 'chat_' + Date.now(),
+                title: 'New Conversation',
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                messages: [
+                    { role: 'model', text: 'Hello! I am **NexusAI**, your enterprise assistant. How can I support your workflow today?' }
+                ]
+            };
+            AppState.chats.unshift(newChat);
+            saveLocalStorage();
+            switchChat(newChat.id);
+            renderChatsList();
+            switchMainView('chat');
+        }
+
+        function switchChat(chatId) {
+            AppState.currentChatId = chatId;
+            renderChatsList();
+            renderActiveMessages();
+            
+            const activeChat = AppState.chats.find(c => c.id === chatId);
+            if (activeChat) {
+                DOM.currentSessionTitle.textContent = activeChat.title;
+            }
+        }
+
+        function renderChatsList(filterQuery = '') {
+            DOM.chatsContainer.innerHTML = '';
+            
+            const filtered = AppState.chats.filter(c => c.title.toLowerCase().includes(filterQuery));
+            
+            filtered.forEach(chat => {
+                const isActive = chat.id === AppState.currentChatId;
+                const div = document.createElement('div');
+                div.className = `group flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition ${
+                    isActive ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5 truncate flex-1">
+                        <i class="fa-regular fa-message ${isActive ? 'text-indigo-400' : 'text-slate-500'}"></i>
+                        <span class="truncate font-medium">${escapeHtml(chat.title)}</span>
+                    </div>
+                    <button class="delete-chat-btn opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 px-1 transition" title="Delete Chat">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+
+                div.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-chat-btn')) {
+                        e.stopPropagation();
+                        deleteChat(chat.id);
+                    } else {
+                        switchChat(chat.id);
+                        if (window.innerWidth < 768) DOM.sidebar.classList.add('-translate-x-full');
+                    }
+                });
+
+                DOM.chatsContainer.appendChild(div);
+            });
+        }
+
+        function deleteChat(chatId) {
+            AppState.chats = AppState.chats.filter(c => c.id !== chatId);
+            saveLocalStorage();
+            if (AppState.chats.length === 0) {
+                createNewChat();
+            } else {
+                switchChat(AppState.chats[0].id);
+            }
+        }
+
+        // Render Chat Messages
+        function renderActiveMessages() {
+            DOM.messagesContainer.innerHTML = '';
+            const activeChat = AppState.chats.find(c => c.id === AppState.currentChatId);
+            if (!activeChat) return;
+
+            activeChat.messages.forEach(msg => {
+                appendMessageUI(msg.role, msg.text);
+            });
+
+            DOM.messagesContainer.scrollTop = DOM.messagesContainer.scrollHeight;
+        }
+
+        function appendMessageUI(role, text) {
+            const isUser = role === 'user';
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex items-start gap-3.5 ${isUser ? 'flex-row-reverse' : ''}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = `w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-md ${
+                isUser 
+                    ? 'bg-gradient-to-tr from-emerald-500 to-teal-600 text-white' 
+                    : 'bg-gradient-to-tr from-indigo-600 to-purple-600 text-white'
+            }`;
+            avatar.innerHTML = isUser ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-brain"></i>';
+
+            const bubble = document.createElement('div');
+            bubble.className = `p-4 rounded-2xl max-w-[85%] md:max-w-[75%] shadow-md leading-relaxed text-sm ${
+                isUser 
+                    ? 'bg-indigo-600 text-white rounded-tr-sm font-normal' 
+                    : 'glass-card border border-slate-800 text-slate-200 rounded-tl-sm prose prose-invert'
+            }`;
+
+            if (isUser) {
+                bubble.textContent = text;
+            } else {
+                bubble.innerHTML = marked.parse(text);
+                
+                // Audio TTS Icon Action
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'mt-3 pt-2 border-t border-slate-800/60 flex items-center gap-3 text-xs text-slate-500';
+                actionsDiv.innerHTML = `
+                    <button class="speak-btn hover:text-indigo-400 transition" title="Listen Audio"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="copy-btn hover:text-indigo-400 transition" title="Copy Text"><i class="fa-regular fa-copy"></i></button>
+                `;
+                
+                actionsDiv.querySelector('.speak-btn').addEventListener('click', () => speakText(text));
+                actionsDiv.querySelector('.copy-btn').addEventListener('click', () => {
+                    navigator.clipboard.writeText(text);
+                });
+
+                bubble.appendChild(actionsDiv);
+            }
+
+            wrapper.appendChild(avatar);
+            wrapper.appendChild(bubble);
+            DOM.messagesContainer.appendChild(wrapper);
+
+            // Trigger code block highlighting
+            DOM.messagesContainer.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+
+            DOM.messagesContainer.scrollTop = DOM.messagesContainer.scrollHeight;
+        }
+
+        // Send & Process Messages via Gemini API
+        async function handleSendMessage() {
+            const text = DOM.userInput.value.trim();
+            if (!text) return;
+
+            const activeChat = AppState.chats.find(c => c.id === AppState.currentChatId);
+            if (!activeChat) return;
+
+            // Auto-update conversation title on first user turn
+            if (activeChat.messages.length <= 1) {
+                activeChat.title = text.length > 28 ? text.substring(0, 28) + '...' : text;
+                DOM.currentSessionTitle.textContent = activeChat.title;
+                renderChatsList();
+            }
+
+            // Append User Message
+            activeChat.messages.push({ role: 'user', text: text });
+            appendMessageUI('user', text);
+            DOM.userInput.value = '';
+
+            // Show Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            const loadingWrapper = document.createElement('div');
+            loadingWrapper.className = 'flex items-start gap-3.5';
+            loadingWrapper.id = loadingId;
+            loadingWrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xs font-bold"><i class="fa-solid fa-brain"></i></div>
+                <div class="glass-card p-4 rounded-2xl rounded-tl-sm text-xs text-slate-400 font-mono flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></div>
+                    Executing LLM inference...
+                </div>
+            `;
+            DOM.messagesContainer.appendChild(loadingWrapper);
+            DOM.messagesContainer.scrollTop = DOM.messagesContainer.scrollHeight;
+
+            try {
+                // Call Gemini API (gemini-3-flash-preview)
+                const responseText = await callGeminiAPI(text, activeChat.messages);
+                
+                document.getElementById(loadingId).remove();
+                activeChat.messages.push({ role: 'model', text: responseText });
+                saveLocalStorage();
+                appendMessageUI('model', responseText);
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                appendMessageUI('model', '⚠️ **Error:** Failed to connect with Gemini API. Please verify network or API keys.');
+            }
+        }
+
+        // Gemini 3 Flash Text Generation Call
+        async function callGeminiAPI(userPrompt, conversationHistory) {
+            const apiKey = AppState.settings.customApiKey || "AQ.Ab8RN6I1qP0aWtzXYXkoQeik26GAOKNCR9XPzX9GP5qZE7_NUw";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            // Build request history
+            const contents = conversationHistory.map(m => ({
+                role: m.role === 'user' ? 'user' : 'model',
+                parts: [{ text: m.text }]
+            }));
+
+            const payload = {
+                contents: contents,
+                generationConfig: {
+                    temperature: AppState.params.temperature,
+                    topP: AppState.params.topP,
+                    maxOutputTokens: AppState.params.maxTokens
+                }
+            };
+
+            if (AppState.systemPersona) {
+                payload.systemInstruction = {
+                    parts: [{ text: AppState.systemPersona }]
+                };
+            }
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (data.candidates && data.candidates[0].content?.parts?.[0]?.text) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("Invalid API response format");
+            }
+        }
+
+        // Image Generation Call (gemini-3.1-flash-image)
+        async function handleGenerateImage() {
+            const prompt = DOM.imagePromptInput.value.trim();
+            if (!prompt) return;
+
+            const style = DOM.imageStyleSelect.value;
+            const fullPrompt = `${prompt}, in high resolution ${style} style`;
+
+            DOM.imagePlaceholder.classList.add('hidden');
+            DOM.imageResultContainer.classList.add('hidden');
+            DOM.imageLoading.classList.remove('hidden');
+
+            try {
+                const apiKey = AppState.settings.customApiKey || "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        parts: [{ text: fullPrompt }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ['IMAGE'],
+                        imageConfig: { aspectRatio: "1:1" }
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                const base64Data = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (base64Data) {
+                    const imgSrc = `data:image/png;base64,${base64Data}`;
+                    DOM.generatedImageOutput.src = imgSrc;
+                    DOM.downloadImageLink.href = imgSrc;
+                    DOM.imageLoading.classList.add('hidden');
+                    DOM.imageResultContainer.classList.remove('hidden');
+                } else {
+                    throw new Error("No image data received");
+                }
+            } catch (err) {
+                DOM.imageLoading.classList.add('hidden');
+                DOM.imagePlaceholder.classList.remove('hidden');
+                alert("Image Generation Error: Ensure your API key supports Gemini Image models.");
+            }
+        }
+
+        // Render Preset Agents
+        function renderAgentsPresets() {
+            DOM.agentsPresetsContainer.innerHTML = '';
+            AppState.agentPresets.forEach(agent => {
+                const div = document.createElement('div');
+                div.className = 'p-2.5 rounded-xl bg-slate-800/40 hover:bg-slate-800/80 border border-slate-800 cursor-pointer transition flex items-center justify-between group';
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid ${agent.icon} ${agent.color} text-sm"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-200">${agent.name}</p>
+                            <p class="text-[10px] text-slate-400">Preset Agent Persona</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-slate-300 text-xs"></i>
+                `;
+                div.addEventListener('click', () => {
+                    AppState.systemPersona = agent.prompt;
+                    DOM.activePromptText.textContent = `${agent.name} Active`;
+                    DOM.activeSystemPromptIndicator.classList.remove('hidden');
+                    DOM.currentAgentBadge.textContent = `Persona: ${agent.name}`;
+                    switchMainView('chat');
+                });
+                DOM.agentsPresetsContainer.appendChild(div);
+            });
+        }
+
+        // Render Prompt Templates
+        function renderPromptLibrary() {
+            const list = document.getElementById('prompt-templates-list');
+            list.innerHTML = '';
+            AppState.promptLibrary.forEach(prompt => {
+                const card = document.createElement('div');
+                card.className = 'p-3.5 rounded-xl glass-card border border-slate-800 hover:border-indigo-500/40 cursor-pointer transition space-y-1.5';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-xs text-white">${prompt.title}</span>
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">${prompt.category}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 line-clamp-2">${escapeHtml(prompt.text)}</p>
+                `;
+                card.addEventListener('click', () => {
+                    DOM.userInput.value = prompt.text;
+                    DOM.modalPrompts.classList.add('hidden');
+                    DOM.userInput.focus();
+                });
+                list.appendChild(card);
+            });
+        }
+
+        // Audio TTS Function
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const cleanText = text.replace(/[*#`_]/g, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = AppState.settings.speechRate || 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Export Conversation Log
+        function exportCurrentChat() {
+            const activeChat = AppState.chats.find(c => c.id === AppState.currentChatId);
+            if (!activeChat) return;
+
+            let content = `# Workspace Conversation: ${activeChat.title}\n\n`;
+            activeChat.messages.forEach(m => {
+                content += `### ${m.role === 'user' ? 'User' : 'NexusAI'}:\n${m.text}\n\n---\n\n`;
+            });
+
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${activeChat.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.md`;
+            a.click();
+        }
+
+        // Helper: Escape HTML
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Start Application on Window Load
+        window.onload = initApp;
+    </script>
+</body>
+</html>
